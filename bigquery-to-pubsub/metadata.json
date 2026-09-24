@@ -1,0 +1,36 @@
+{
+  "name": "BigQuery to Pub/Sub",
+  "description": "Reads every row of a BigQuery table (or query) and publishes one Pub/Sub message per row: requestPayload becomes the message body, headers become the message attributes.",
+  "parameters": [
+    {
+      "name": "outputTopic",
+      "label": "Output Pub/Sub topic",
+      "helpText": "Topic to publish to, e.g. projects/my-project/topics/my-topic.",
+      "regexes": ["^projects/[^/]+/topics/[^/]+$"]
+    },
+    {
+      "name": "inputTable",
+      "label": "Input BigQuery table",
+      "helpText": "Table to read, e.g. my-project:my_dataset.my_table. Provide either inputTable or query.",
+      "isOptional": true
+    },
+    {
+      "name": "query",
+      "label": "Input BigQuery query",
+      "helpText": "Standard SQL query to read instead of a whole table. Provide either inputTable or query.",
+      "isOptional": true
+    },
+    {
+      "name": "headersColumn",
+      "label": "Headers column",
+      "helpText": "Column published as message attributes. Defaults to headers.",
+      "isOptional": true
+    },
+    {
+      "name": "payloadColumn",
+      "label": "Payload column",
+      "helpText": "Column published as the message body. Defaults to requestPayload.",
+      "isOptional": true
+    }
+  ]
+}
