@@ -18,13 +18,17 @@ import org.apache.beam.sdk.transforms.ParDo;
  *   <li>message attributes = the {@code headers} column
  * </ul>
  *
- * <p>The target topic is passed on the command line with {@code --outputTopic}.
+ * <p>The target topic is passed on the command line with {@code --outputTopic}, or comes from
+ * {@code src/main/resources/application-<env>.properties} when run with {@code --env=<env>} (see
+ * {@link EnvironmentConfig}).
  */
 public class BigQueryToPubSub {
 
   public static void main(String[] args) {
     BigQueryToPubSubOptions options =
-        PipelineOptionsFactory.fromArgs(args).withValidation().as(BigQueryToPubSubOptions.class);
+        PipelineOptionsFactory.fromArgs(EnvironmentConfig.resolveArgs(args))
+            .withValidation()
+            .as(BigQueryToPubSubOptions.class);
     run(options);
   }
 

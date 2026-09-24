@@ -29,11 +29,52 @@ values ≤ 1024 bytes, and keys must not start with `goog`.
 
 | Name            | Required | Default          | Example                               |
 |-----------------|----------|------------------|---------------------------------------|
+| `env`           | no       |                  | `dev` (loads `application-dev.properties`) |
 | `outputTopic`   | yes      |                  | `projects/my-project/topics/my-topic` |
 | `inputTable`    | one of   |                  | `my-project:my_dataset.my_table`      |
 | `query`         | one of   |                  | `SELECT headers, requestPayload FROM \`p.d.t\` WHERE ...` |
 | `headersColumn` | no       | `headers`        |                                       |
 | `payloadColumn` | no       | `requestPayload` |                                       |
+
+## Environments (dev / qa / prod)
+
+Settings live in `src/main/resources`:
+
+| File                          | Purpose                                              |
+|-------------------------------|------------------------------------------------------|
+| `application.properties`      | shared by all environments (`runner=DirectRunner`, column names) |
+| `application-dev.properties`  | dev project, table, topic                            |
+| `application-qa.properties`   | qa project, table, topic                             |
+| `application-prod.properties` | prod project, table, topic                           |
+
+Pick one with `--env=dev|qa|prod` (or the `APP_ENV` environment variable). Every `key=value`
+becomes the pipeline option `--key=value`. Precedence: command line > `application-<env>` >
+`application`. Without `--env`, no file is loaded and only command-line arguments are used.
+
+## Run locally in IntelliJ (DirectRunner)
+
+1. Log in once so the pipeline can reach BigQuery and Pub/Sub with your identity:
+   ```bash
+   gcloud auth application-default login
+   ```
+   Your account needs read access to the table (plus `bigquery.readSessionUser` on the project)
+   and `pubsub.publisher` on the topic.
+2. Replace the placeholder values in `src/main/resources/application-<env>.properties`.
+3. **File → Open** the `bigquery-to-pubsub` folder (IntelliJ imports it as a Maven project,
+   JDK 17+).
+4. Pick **BigQueryToPubSub [dev]** (or `[qa]`, `[prod]`) from the run configuration drop-down
+   and click Run or Debug. These come from `.run/` in the project.
+
+   To create one by hand: **Run → Edit Configurations → + → Application**, main class
+   `com.example.dataflow.BigQueryToPubSub`, program arguments `--env=dev`.
+
+DirectRunner runs the whole pipeline inside the IntelliJ JVM, so you can set breakpoints in
+`TableRowToPubsubMessageFn`. It **really publishes** to the configured topic, so point dev at a
+test topic. To try something one-off, add arguments after `--env`, e.g.
+`--env=dev --outputTopic=projects/my-dev-project/topics/scratch`.
+
+To run the same env on Dataflow instead: `--env=dev --runner=DataflowRunner`
+(uses `region` and `tempLocation` from the file).
 
 ## Build and test
 

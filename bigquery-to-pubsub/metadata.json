@@ -5,8 +5,11 @@
     {
       "name": "outputTopic",
       "label": "Output Pub/Sub topic",
-      "helpText": "Topic to publish to, e.g. projects/my-project/topics/my-topic.",
-      "regexes": ["^projects/[^/]+/topics/[^/]+$"]
+      "helpText": "Topic to publish to, e.g. projects/my-project/topics/my-topic. Required unless it is set in the env properties file.",
+      "regexes": [
+        "^projects/[^/]+/topics/[^/]+$"
+      ],
+      "isOptional": true
     },
     {
       "name": "inputTable",
@@ -30,6 +33,15 @@
       "name": "payloadColumn",
       "label": "Payload column",
       "helpText": "Column published as the message body. Defaults to requestPayload.",
+      "isOptional": true
+    },
+    {
+      "name": "env",
+      "label": "Environment",
+      "helpText": "Load defaults from application-<env>.properties bundled in the jar (dev, qa or prod). Other parameters override it.",
+      "regexes": [
+        "^[A-Za-z0-9_-]+$"
+      ],
       "isOptional": true
     }
   ]
