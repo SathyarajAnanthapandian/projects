@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Division Orders Map</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+</head>
+<body>
+  <main class="viz-root">
+    <header class="page-head">
+      <div>
+        <h1>Orders by division</h1>
+        <p class="subtitle"><span id="range-label">Last 7 days</span> <span id="sample-badge" class="badge" hidden>Sample data</span></p>
+      </div>
+      <p class="updated" id="updated"></p>
+    </header>
+
+    <div class="filters" role="toolbar" aria-label="Filters">
+      <label class="field">
+        <span>Days</span>
+        <select id="day-filter"></select>
+      </label>
+      <div class="field">
+        <span id="metric-label">Metric</span>
+        <div class="segmented" role="radiogroup" aria-labelledby="metric-label">
+          <button type="button" role="radio" data-metric="orders" aria-checked="true">Orders</button>
+          <button type="button" role="radio" data-metric="demand" aria-checked="false">Demand $</button>
+        </div>
+      </div>
+      <button type="button" id="clear-selection" class="chip" hidden>
+        <span id="selection-name"></span> <span aria-hidden="true">✕</span><span class="sr-only">Clear division filter</span>
+      </button>
+    </div>
+
+    <section class="kpis" aria-label="Summary">
+      <div class="kpi"><span class="kpi-label">Orders placed</span><span class="kpi-value" id="kpi-orders">–</span></div>
+      <div class="kpi"><span class="kpi-label">Demand</span><span class="kpi-value" id="kpi-demand">–</span></div>
+      <div class="kpi"><span class="kpi-label">Avg order value</span><span class="kpi-value" id="kpi-aov">–</span></div>
+      <div class="kpi"><span class="kpi-label">Top division</span><span class="kpi-value kpi-text" id="kpi-top">–</span></div>
+    </section>
+
+    <div class="grid">
+      <section class="card map-card">
+        <h2 id="map-title">Orders placed by division</h2>
+        <svg id="map" viewBox="0 0 975 610" role="group" aria-labelledby="map-title"></svg>
+        <div class="legend" id="legend" aria-hidden="true"></div>
+        <p class="footnote" id="footnote"></p>
+      </section>
+
+      <section class="card">
+        <h2 id="rank-title">Ranked</h2>
+        <ol class="rank" id="rank"></ol>
+      </section>
+
+      <section class="card trend-card">
+        <h2 id="trend-title">Daily orders</h2>
+        <svg id="trend" role="img" aria-labelledby="trend-title"></svg>
+      </section>
+    </div>
+
+    <details class="card table-card">
+      <summary>View as table</summary>
+      <div class="table-wrap"><table id="table"></table></div>
+    </details>
+
+    <div id="tooltip" class="tooltip" role="status" hidden></div>
+    <p id="error" class="error" role="alert" hidden></p>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
