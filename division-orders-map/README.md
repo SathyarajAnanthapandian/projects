@@ -46,6 +46,10 @@ GET <apiUrl>?startDate=2026-09-17&endDate=2026-09-23
 ]
 ```
 
+The Java service in `../order-division-api` serves exactly this from BigQuery
+at `/api/v1/orders/by-state`. It also has a server-side division rollup at
+`/api/v1/orders/divisions`.
+
 The endpoint can also return `{ "rows": [...] }`. `demand` is optional. If it's
 missing, the Demand metric is hidden. `sql/orders_by_state_last_7_days.sql` is
 a starting query for the endpoint.
