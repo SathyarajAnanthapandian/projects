@@ -1,0 +1,46 @@
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json
+
+spring:
+  application:
+    name: order-division-api
+  cache:
+    cache-names: stateOrderCounts
+    # Today's counts change constantly, so keep this short. Raise it if the map
+    # only needs to refresh every 15-30 minutes.
+    caffeine:
+      spec: maximumSize=200,expireAfterWrite=5m
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,caches
+
+oms:
+  bigquery:
+    # Project that runs and pays for query jobs. Blank = the ADC project.
+    job-project-id: ${BQ_JOB_PROJECT_ID:}
+  order-events:
+    project-id: ${BQ_PROJECT_ID}
+    dataset: ${BQ_DATASET}
+    table: ${BQ_TABLE:op_order_events}
+    columns:
+      order-id: order_id
+      event-type: event_type
+      event-ts: event_ts
+      ship-to-state: ship_to_state
+      ship-to-country: ""       # e.g. ship_to_country to keep only country=US
+      demand: ""                # e.g. order_total to return demand $
+      partition-date: ""        # e.g. event_date when partitioned on a DATE column
+    placed-event-types:
+      - ORDER_CREATED
+    time-zone: America/New_York
+    default-days: 7
+    max-range-days: 92
+    maximum-bytes-billed: 50000000000   # 50 GB per query
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:}
